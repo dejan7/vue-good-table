@@ -1,6 +1,7 @@
 <template>
 <thead>
   <tr>
+    <th v-if="childrenVisibilityToggle"></th>
     <th v-if="lineNumbers" class="line-numbers"></th>
     <th v-if="selectable" class="vgt-checkbox-col">
       <input
@@ -29,7 +30,8 @@
     :selectable="selectable"
     :columns="columns"
     :mode="mode"
-    :typed-columns="typedColumns">
+    :typed-columns="typedColumns"
+    :children-visibility-toggle="childrenVisibilityToggle">
   </tr>
 </thead>
 </template>
@@ -65,7 +67,6 @@ export default {
       type: String,
     },
     typedColumns: {},
-
     //* Sort related
     sortable: {
       type: Boolean,
@@ -93,6 +94,10 @@ export default {
     tableRef: {},
 
     paginated: {},
+
+    childrenVisibilityToggle: {
+      type: Boolean
+    }
   },
   watch: {
     tableRef: {
