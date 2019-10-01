@@ -91,7 +91,6 @@ export default {
   },
   methods: {
     toggleChildrenVisibility() {
-      console.log("styuuu");
       this.$emit('childrenVisibilityToggled')
     }
   },

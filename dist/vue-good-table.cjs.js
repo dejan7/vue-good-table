@@ -8665,7 +8665,6 @@ var script$5 = {
   computed: {},
   methods: {
     toggleChildrenVisibility: function toggleChildrenVisibility() {
-      console.log("styuuu");
       this.$emit('childrenVisibilityToggled');
     }
   },
@@ -13727,11 +13726,15 @@ var script$6 = {
       return false;
     },
     totalRowCount: function totalRowCount() {
-      var total = 0;
-      lodash_foreach(this.processedRows, function (headerRow) {
-        total += headerRow.children ? headerRow.children.length : 0;
-      });
-      return total;
+      if (this.groupOptions.enabled) {
+        return this.processedRows.length;
+      } else {
+        var total = 0;
+        lodash_foreach(this.processedRows, function (headerRow) {
+          total += headerRow.children ? headerRow.children.length : 0;
+        });
+        return total;
+      }
     },
     totalPageRowCount: function totalPageRowCount() {
       var total = 0;
@@ -13882,11 +13885,11 @@ var script$6 = {
 
       if (this.mode === 'remote') {
         return this.processedRows;
-      } // for every group, extract the child rows
+      }
+
+      var paginatedRows = []; // for every group, extract the child rows
       // to cater to paging
 
-
-      var paginatedRows = [];
       lodash_foreach(this.processedRows, function (childRows) {
         var _paginatedRows;
 
@@ -13894,6 +13897,14 @@ var script$6 = {
       });
 
       if (this.paginate) {
+        if (this.groupOptions.enabled) {
+          // group pagination
+          paginatedRows = [];
+          lodash_foreach(this.processedRows, function (parentRows) {
+            paginatedRows.push(parentRows);
+          });
+        }
+
         var pageStart = (this.currentPage - 1) * this.currentPerPage; // in case of filtering we might be on a page that is
         // not relevant anymore
         // also, if setting to all, current page will not be valid
@@ -13911,6 +13922,19 @@ var script$6 = {
         }
 
         paginatedRows = paginatedRows.slice(pageStart, pageEnd);
+
+        if (this.groupOptions.enabled) {
+          // group pagination
+          var tempRows = paginatedRows;
+          paginatedRows = [];
+          lodash_foreach(tempRows, function (parentRows) {
+            var _paginatedRows2;
+
+            console.log(parentRows);
+
+            (_paginatedRows2 = paginatedRows).push.apply(_paginatedRows2, _toConsumableArray(parentRows.children));
+          });
+        }
       } // reconstruct paginated rows here
 
 
@@ -14754,7 +14778,7 @@ var __vue_render__$6 = function __vue_render__() {
         }
       }, [_vm.groupOptions.childrenVisibilityToggle ? _c('td') : _vm._e(), _vm._v(" "), _vm.lineNumbers ? _c('th', {
         staticClass: "line-numbers"
-      }, [_vm._v("\n              " + _vm._s(_vm.getCurrentIndex(index)) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.selectable ? _c('th', {
+      }, [_vm._v("\n            " + _vm._s(_vm.getCurrentIndex(index)) + "\n          ")]) : _vm._e(), _vm._v(" "), _vm.selectable ? _c('th', {
         staticClass: "vgt-checkbox-col",
         on: {
           "click": function click($event) {
@@ -14823,7 +14847,7 @@ var __vue_render__$6 = function __vue_render__() {
     }
   }, [_vm._t("emptystate", [_c('div', {
     staticClass: "vgt-center-align vgt-text-disabled"
-  }, [_vm._v("\n                  No data for table\n                ")])])], 2)])]) : _vm._e(), _vm._v(" "), _vm._t("tbody-after")], 2)]), _vm._v(" "), _vm.hasFooterSlot ? _c('div', {
+  }, [_vm._v("\n                No data for table\n              ")])])], 2)])]) : _vm._e(), _vm._v(" "), _vm._t("tbody-after")], 2)]), _vm._v(" "), _vm.hasFooterSlot ? _c('div', {
     staticClass: "vgt-wrap__actions-footer"
   }, [_vm._t("table-actions-bottom")], 2) : _vm._e(), _vm._v(" "), _vm.paginate && _vm.paginateOnBottom ? _vm._t("pagination-bottom", [_c('vgt-pagination', {
     ref: "paginationBottom",
