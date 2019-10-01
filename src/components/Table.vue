@@ -866,7 +866,6 @@
             paginatedRows = [];
 
             each(tempRows, (parentRows) => {
-              console.log(parentRows);
               paginatedRows.push(...parentRows.children);
             });
           }
